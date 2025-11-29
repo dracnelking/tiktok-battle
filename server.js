@@ -79,7 +79,7 @@ function connectToTikTok(username) {
         // --- EQUIPO GIRLS (Rosa) ---
         if (giftName === 'rose') {
             team = 'girl';
-            basePower = 0.5; // 1 Rosa = 0.5% de movimiento
+            basePower = 1; // 1 Rosa = 1% de movimiento
         } 
         else if (giftName === 'money gun') { // Ejemplo de regalo caro
             team = 'girl';
@@ -87,9 +87,9 @@ function connectToTikTok(username) {
         }
 
         // --- EQUIPO BOYS (Azul) ---
-        else if (giftName === 'gg' || giftName.includes('dumbbell')) {
+        else if (giftName === 'tiktok' || giftName.includes('dumbbell')) {
             team = 'boy';
-            basePower = 0.5; // 1 GG = 0.5% de movimiento
+            basePower = 1; // 1 GG = 1% de movimiento
         } 
         else if (giftName === 'corgi') { // Ejemplo de regalo caro para boys
             team = 'boy';
