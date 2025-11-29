@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TikTok Battle</title>
+    <style>
+        body { 
+            margin: 0; padding: 0; 
+            background-color: #333; /* Fondo oscuro para los bordes */
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden; font-family: sans-serif;
+        }
+
+        /* Contenedor principal que fuerza el aspecto 9:16 (Móvil) */
+        #phone-screen {
+            width: 100vh; /* Se ajustará a la altura */
+            max-width: 56.25vh; /* Proporción 9:16 */
+            height: 100vh;
+            background: white;
+            position: relative;
+            display: flex;
+            overflow: hidden; /* Importante para cortar las imágenes al ganar */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* --- EQUIPO CHICAS (IZQUIERDA) --- */
+        #girl-side {
+            background-color: #ff85c0; /* Rosa */
+            height: 100%;
+            width: 50%; /* Empieza al 50% */
+            position: relative;
+            transition: width 0.2s linear; /* Movimiento fluido */
+            border-right: 6px solid white; /* ESTA ES LA PARED */
+            z-index: 2;
+        }
+
+        /* Imagen Chica: Pegada a la derecha (pared) de su caja */
+        .pusher-img.girl {
+            position: absolute;
+            right: -10px; /* Un poco metida en la pared */
+            top: 50%;
+            transform: translateY(-50%) scaleX(-1); /* Espejo si es necesario */
+            height: 250px; /* Ajusta el tamaño aquí */
+            pointer-events: none;
+        }
+
+        /* Texto y contador Chica */
+        .score-display.girl {
+            position: absolute; top: 10%; left: 20px;
+            color: white; font-weight: bold; font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* --- EQUIPO CHICOS (DERECHA) --- */
+        #boy-side {
+            background-color: #4facfe; /* Azul */
+            flex-grow: 1; /* Ocupa el resto */
+            height: 100%;
+            position: relative;
+            overflow: visible; /* Para ver al chico aunque le quede poco espacio */
+        }
+
+        /* Imagen Chico: Pegada a la izquierda (pared) de su caja */
+        .pusher-img.boy {
+            position: absolute;
+            left: -16px; /* Pegado a la pared */
+            top: 50%;
+            transform: translateY(-50%);
+            height: 250px; /* Ajusta el tamaño aquí */
+            pointer-events: none;
+            z-index: 3; /* Para que se superponga bien */
+        }
+
+        .score-display.boy {
+            position: absolute; top: 10%; right: 20px;
+            color: white; font-weight: bold; font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* --- PANTALLA DE VICTORIA --- */
+        #winner-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none; flex-direction: column; 
+            justify-content: center; align-items: center;
+            z-index: 10; color: gold; text-align: center;
+        }
+        #winner-overlay h1 { font-size: 4rem; margin: 0; text-transform: uppercase;}
+    </style>
+</head>
+<body>
+
+    <div id="phone-screen">
+        <div id="winner-overlay">
+            <h1 id="winner-text">GIRLS WIN!</h1>
+            <p style="color:white; font-size: 1.5rem">Reiniciando...</p>
+        </div>
+
+        <div id="girl-side">
+            <div class="score-display girl">GIRLS<br><span id="girl-percent">50</span>%</div>
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140047.png" class="pusher-img girl" alt="Girl Pushing">
+        </div>
+
+        <div id="boy-side">
+            <div class="score-display boy">BOYS<br><span id="boy-percent">50</span>%</div>
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140037.png" class="pusher-img boy" alt="Boy Pushing">
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        
+        // 1. Obtener usuario de la URL (ej: misitio.com/?username=elxokas)
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get('username') || ''; 
+
+        if(username) {
+            socket.emit('setTiktokUser', username);
+            console.log("Solicitando conexión a:", username);
+        } else {
+            alert("¡OJO! No has puesto usuario en la URL. Usa: ?username=usuario_tiktok");
+        }
+
+        // Lógica del Juego
+        let girlWidth = 50; // Empezamos al 50%
+        const girlDiv = document.getElementById('girl-side');
+        const girlText = document.getElementById('girl-percent');
+        const boyText = document.getElementById('boy-percent');
+        const winnerOverlay = document.getElementById('winner-overlay');
+        const winnerText = document.getElementById('winner-text');
+        
+        let isGameOver = false;
+
+        socket.on('gameUpdate', (data) => {
+            if(isGameOver) return;
+
+            if (data.team === 'girl') {
+                girlWidth += data.power;
+            } else {
+                girlWidth -= data.power;
+            }
+            updateScreen();
+        });
+
+        function updateScreen() {
+            // Limites lógicos
+            if (girlWidth > 100) girlWidth = 100;
+            if (girlWidth < 0) girlWidth = 0;
+
+            // Actualizar el ancho del div rosa (la pared se mueve sola porque es el borde)
+            girlDiv.style.width = girlWidth + '%';
+            
+            // Actualizar textos
+            girlText.innerText = Math.round(girlWidth);
+            boyText.innerText = Math.round(100 - girlWidth);
+
+            checkWin();
+        }
+
+        function checkWin() {
+            if (girlWidth >= 100) {
+                doWin("GIRLS WIN!", "#ff85c0");
+            } else if (girlWidth <= 0) {
+                doWin("BOYS WIN!", "#4facfe");
+            }
+        }
+
+        function doWin(text, color) {
+            isGameOver = true;
+            winnerText.innerText = text;
+            winnerText.style.color = color;
+            winnerOverlay.style.display = 'flex';
+
+            setTimeout(() => {
+                girlWidth = 50;
+                updateScreen();
+                winnerOverlay.style.display = 'none';
+                isGameOver = false;
+            }, 4000); // 4 segundos de pausa
+        }
+    </script>
+</body>
+</html>
