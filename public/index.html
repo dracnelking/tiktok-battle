@@ -30,92 +30,104 @@
             background: rgba(0,0,0,0); 
         }
 
-        /* --- UI SUPERIOR (Contadores y Porcentajes) --- */
+        /* --- UI SUPERIOR (CONTENEDOR GENERAL) --- */
         .team-ui {
             position: absolute;
-            top: 0; /* Empezamos desde arriba del todo */
-            width: 300px; /* Ancho fijo para controlar mejor el centro */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            top: 0; 
+            width: 300px; 
+            height: 100%; /* Ocupa toda la altura para poder posicionar cosas libremente */
+            /* ELIMINADO: display: flex; flex-direction: column; */
+            /* Ahora los hijos son libres */
             z-index: 20;
         }
 
-        /* AJUSTE HORIZONTAL DE LOS EQUIPOS */
-        /* Los movemos más a los extremos como pediste */
         #girl-ui { left: 5%; } 
         #boy-ui { right: 5%; }
 
+
+        /* --- 1. NOMBRE DEL EQUIPO --- */
         .team-name { 
+            position: absolute; /* Libre movimiento */
+            width: 100%; /* Para poder centrar el texto */
+            text-align: center;
+            
+            /* AQUÍ MUEVES SOLO EL NOMBRE (Coordenada vertical) */
+            top: 50px; 
+
             font-size: 1.2rem; 
             color: gold; 
-            margin-top: 50px;
-            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* --- CAJA DE VICTORIAS --- */
+        /* --- 2. CAJA DE VICTORIAS --- */
         .victory-box {
-            /* AJUSTE VERTICAL SOLICITADO */
-            margin-top: 70px; 
-            font-size: 2.5rem; /* Número de victorias más grande */
+            position: absolute; /* Libre movimiento */
+            left: 50%; /* Centrado horizontal */
+            transform: translateX(-50%); /* Corrección del centrado */
+            
+            /* AQUÍ MUEVES SOLO LAS VICTORIAS */
+            top: 150px; 
+
+            background-color: rgba(0, 0, 0, 0.4); 
+            padding: 10px 30px;
+            border-radius: 12px;
+            font-size: 2.5rem; 
             font-weight: bold;
+            color: white;
+            border: 3px solid gold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* --- PORCENTAJE --- */
+        /* --- 3. PORCENTAJE --- */
         .big-percent {
+            position: absolute; /* Libre movimiento */
+            width: 100%;
+            text-align: center;
+
+            /* AQUÍ MUEVES SOLO EL PORCENTAJE */
+            top: 300px; 
+
             font-size: 5rem; 
-            margin: 100px 0 0 0; /* Un poco de espacio respecto a las victorias */
             line-height: 1;
-            /* Ahora está DEBAJO de las victorias visualmente */
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            margin: 0; /* Quitamos márgenes para usar solo 'top' */
         }
         
 
         /* --- EL CENTRO MÓVIL (Pilar + Personajes) --- */
         #movable-center {
             position: absolute;
-            /* AJUSTE DE ALTURA DE PERSONAJES: Bajado al 70% */
             top: 70%; 
-            
             left: 50%; 
             transform: translate(-50%, -50%); 
             transition: left 0.3s ease-out; 
             z-index: 10;
             display: flex; 
-            align-items: flex-end; /* Alineados abajo */
+            align-items: flex-end; 
             justify-content: center;
             position: relative; 
             width: 10px;
             height: 10px;
+            /* Cuidado con este margen, si ves que se bajan mucho los muñecos, bórralo */
             margin-top: 140px; 
         }
 
-        /* El Pilar Central */
         #center-pilar {
-            /* AJUSTE DE TAMAÑO PILAR: Mucho más grande */
             height: 600px; 
             width: auto;
             z-index: 12; 
-            margin-bottom: -50px; /* Ajuste fino para que pise el suelo bien */
+            margin-bottom: -50px; 
         }
 
-        /* Estilos comunes para los personajes */
         .character-img {
             position: absolute;
             height: 300px; 
-            bottom: -50px; /* Ajuste para alinear pies con el pilar */
+            bottom: -50px; 
         }
 
-        #girl-char {
-            right: 40px; /* Separación del pilar */
-            z-index: 11;
-        }
-
-        #boy-char {
-            left: 40px; /* Separación del pilar */
-            z-index: 11;
-        }
+        #girl-char { right: 40px; z-index: 11; }
+        #boy-char { left: 40px; z-index: 11; }
 
 
         /* --- PANTALLA DE VICTORIA --- */
@@ -144,26 +156,19 @@
         
         <div id="girl-ui" class="team-ui">
              <div class="team-name">TEAM Tralalero Tralala</div>
-             
              <div class="victory-box"><span id="girl-wins">0</span></div>
-             
              <h2 class="big-percent"><span id="girl-percent-txt">50</span>%</h2>
         </div>
 
         <div id="boy-ui" class="team-ui">
              <div class="team-name">TEAM Tung Tung Tung Shaur</div>
-             
              <div class="victory-box"><span id="boy-wins">0</span></div>
-             
              <h2 class="big-percent"><span id="boy-percent-txt">50</span>%</h2>
         </div>
 
-
         <div id="movable-center">
             <img src="image/tralacut.png" id="girl-char" class="character-img" alt="Girl">
-            
             <img src="image/pilar.png" id="center-pilar" alt="Pilar">
-            
             <img src="image/tungcut.png" id="boy-char" class="character-img" alt="Boy">
         </div>
 
