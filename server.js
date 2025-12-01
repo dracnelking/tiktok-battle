@@ -10,16 +10,14 @@ const io = new Server(server);
 // Servir archivos estáticos de la carpeta 'public'
 app.use(express.static('public'));
 
-// Variable para guardar la conexión activa y no duplicarla
 let tiktokConnection = null;
 
 // ---------------------------------------------------------
-// GESTIÓN DE SOCKETS (COMUNICACIÓN CON LA WEB)
+// GESTIÓN DE SOCKETS
 // ---------------------------------------------------------
 io.on('connection', (socket) => {
-    console.log('Cliente web conectado (OBS o Navegador)');
+    console.log('Cliente web conectado');
 
-    // Esperar a que la web nos diga a qué usuario conectar
     socket.on('setTiktokUser', (username) => {
         connectToTikTok(username);
     });
@@ -29,15 +27,12 @@ io.on('connection', (socket) => {
 // LÓGICA DE TIKTOK
 // ---------------------------------------------------------
 function connectToTikTok(username) {
-    // Si ya estamos conectados a ese usuario, no hacemos nada
     if (tiktokConnection && tiktokConnection.username === username) {
         console.log(`Ya estabas conectado a ${username}`);
         return;
     }
 
-    // Si había otra conexión abierta, la cerramos para limpiar
     if (tiktokConnection) {
-        console.log('Cerrando conexión anterior...');
         tiktokConnection.disconnect();
     }
 
@@ -50,58 +45,45 @@ function connectToTikTok(username) {
         tiktokConnection.username = username;
     }).catch(err => {
         console.error('❌ Error al conectar con TikTok:', err);
-        console.error('NOTA: Asegúrate de que el usuario está EN VIVO realmente.');
     });
 
     // --- ESCUCHAR REGALOS ---
     connection.on('gift', (data) => {
-        // 1. FILTRO DE COMBOS
-        // Si el regalo es parte de un combo (giftType 1) y NO ha terminado el combo, lo ignoramos.
-        // Solo actuamos cuando repeatEnd es true (el usuario dejó de pulsar enviar).
         if (data.giftType === 1 && !data.repeatEnd) {
             return;
         }
 
-        // 2. OBTENER DATOS
         const giftName = data.giftName.toLowerCase();
-        const sender = data.uniqueId;
-        // Si repeatCount no viene definido, asumimos que es 1 (regalo único)
         const multiplier = data.repeatCount || 1;
 
-        console.log(`🎁 RECIBIDO: ${giftName} (x${multiplier}) de ${sender}`);
+        // console.log(`🎁 RECIBIDO: ${giftName} (x${multiplier})`); // Descomentar para depurar
 
-        // 3. CONFIGURACIÓN DE PODER
-        // basePower: Cuánto mueve la pared 1 sola unidad del regalo.
-        // Lo ponemos bajo (0.5) porque si envían un x100, moverá 50% de golpe.
         let basePower = 0;
         let team = '';
 
-        // --- EQUIPO GIRLS (Rosa) ---
+        // --- EQUIPO GIRLS (Izquierda) ---
         if (giftName === 'rose') {
             team = 'girl';
-            basePower = 1; // 1 Rosa = 1% de movimiento
+            basePower = 1; // FUERZA CAMBIADA A 1
         } 
-        else if (giftName === 'money gun') { // Ejemplo de regalo caro
-            team = 'girl';
-            basePower = 10; // Pistola de dinero = 10% directo (se multiplica si envían varias)
-        }
+        // Puedes añadir más regalos aquí
+        // else if (giftName === 'otro_regalo_girl') { team = 'girl'; basePower = 5; }
 
-        // --- EQUIPO BOYS (Azul) ---
-        else if (giftName === 'tiktok' || giftName.includes('dumbbell')) {
+
+        // --- EQUIPO BOYS (Derecha) ---
+        // CAMBIO AQUÍ: Ahora detecta 'tiktok' en lugar de 'gg'
+        else if (giftName === 'tiktok') {
             team = 'boy';
-            basePower = 1; // 1 GG = 1% de movimiento
+            basePower = 1; // FUERZA CAMBIADA A 1
         } 
-        else if (giftName === 'corgi') { // Ejemplo de regalo caro para boys
-            team = 'boy';
-            basePower = 10; 
-        }
+        // Puedes añadir más regalos aquí
+        // else if (giftName === 'otro_regalo_boy') { team = 'boy'; basePower = 5; }
+
 
         // 4. ENVIAR A LA WEB
         if (team !== '' && basePower > 0) {
-            // Calculamos el empujón total
             const totalPower = basePower * multiplier;
-
-            console.log(`⚡ Acción: ${team} empuja con fuerza ${totalPower}%`);
+            console.log(`⚡ Acción: ${team} empuja con fuerza ${totalPower}`);
             
             io.emit('gameUpdate', { 
                 team: team, 
@@ -111,10 +93,6 @@ function connectToTikTok(username) {
     });
 }
 
-// ---------------------------------------------------------
-// INICIAR SERVIDOR
-// ---------------------------------------------------------
-// Render nos da el puerto en process.env.PORT
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
     console.log(`Servidor escuchando en puerto ${port}`);
