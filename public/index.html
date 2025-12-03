@@ -43,21 +43,7 @@
 
         #girl-ui { left: 5%; } 
         #boy-ui { right: 5%; }
-
-
-        /* --- 1. NOMBRE DEL EQUIPO --- */
-        .team-name { 
-            position: absolute; /* Libre movimiento */
-            width: 100%; /* Para poder centrar el texto */
-            text-align: center;
-            
-            /* AQUÍ MUEVES SOLO EL NOMBRE (Coordenada vertical) */
-            top: 50px; 
-
-            font-size: 1.2rem; 
-            color: gold; 
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-        }
+        
 
         /* --- 2. CAJA DE VICTORIAS --- */
         .victory-box {
@@ -66,15 +52,12 @@
             transform: translateX(-50%); /* Corrección del centrado */
             
             /* AQUÍ MUEVES SOLO LAS VICTORIAS */
-            top: 150px; 
-
-            background-color: rgba(0, 0, 0, 0.4); 
+            top: 150px;
+            left: 80px;
             padding: 10px 30px;
-            border-radius: 12px;
             font-size: 2.5rem; 
             font-weight: bold;
             color: white;
-            border: 3px solid gold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         }
 
@@ -85,8 +68,7 @@
             text-align: center;
 
             /* AQUÍ MUEVES SOLO EL PORCENTAJE */
-            top: 300px; 
-
+            top: 10px; 
             font-size: 5rem; 
             line-height: 1;
             color: white;
@@ -155,13 +137,11 @@
     <div id="game-arena">
         
         <div id="girl-ui" class="team-ui">
-             <div class="team-name">TEAM Tralalero Tralala</div>
              <div class="victory-box"><span id="girl-wins">0</span></div>
              <h2 class="big-percent"><span id="girl-percent-txt">50</span>%</h2>
         </div>
 
         <div id="boy-ui" class="team-ui">
-             <div class="team-name">TEAM Tung Tung Tung Shaur</div>
              <div class="victory-box"><span id="boy-wins">0</span></div>
              <h2 class="big-percent"><span id="boy-percent-txt">50</span>%</h2>
         </div>
