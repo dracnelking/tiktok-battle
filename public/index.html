@@ -23,109 +23,89 @@
         }
 
         /* --- UI GENERAL --- */
-        /* Estilos visuales compartidos (Color, borde, fuente) */
+        /* Estilos visuales compartidos */
         .victory-style {
             position: absolute; 
-            font-size: 3rem; 
+            /* CAMBIO: Usamos vw (viewport width) para que el texto escale con la ventana */
+            font-size: 3vw; 
             font-weight: bold;
             color: white;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 20;
-            /* Quitamos el borde y fondo para que parezca que el número está pintado en la piedra */
-            /* Si quieres caja negra, descomenta las líneas de abajo: */
-            /* background: rgba(0,0,0,0.5); padding: 5px 20px; border-radius: 10px; */
+            /* CAMBIO: Z-index bajo para que el pilar pase por encima */
+            z-index: 5; 
         }
 
         .percent-style {
             position: absolute;
-            font-size: 5rem; 
+            /* CAMBIO: Texto escalable */
+            font-size: 5vw; 
             color: white;
             text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            z-index: 20;
+            /* CAMBIO: Z-index bajo */
+            z-index: 5;
             line-height: 1;
         }
 
         /* ==================================================================
-           AQUÍ ES DONDE AJUSTAS LAS POSICIONES INDEPENDIENTEMENTE
+           POSICIONES (Mantenemos los porcentajes, que ya son adaptables)
            ================================================================== */
 
-        /* --- 1. VICTORIAS CHICA (Izquierda) --- */
-        /* Ajusta 'top' y 'left' para que caiga dentro del rectángulo de piedra izquierdo */
-        #girl-wins-box {
-            top: 36%;  /* Altura aproximada del rectángulo */
-            left: 10%; /* Distancia desde la izquierda */
-        }
+        /* Victorias */
+        #girl-wins-box { top: 36%; left: 10%; }
+        #boy-wins-box { top: 36%; right: 10%; }
 
-        /* --- 2. VICTORIAS CHICO (Derecha) --- */
-        /* Ajusta 'top' y 'right' para que caiga dentro del rectángulo de piedra derecho */
-        #boy-wins-box {
-            top: 36%;   /* Altura aproximada del rectángulo */
-            right: 10%; /* Distancia desde la derecha */
-        }
-
-        /* --- 3. PORCENTAJE CHICA --- */
-        /* Lo acercamos al centro (cerca del pilar) */
+        /* Porcentajes */
         #girl-percent-box {
-            top: 25%;   /* Altura */
-            left: 35%;  /* 35% desde la izquierda (casi al centro) */
-            transform: translateX(-50%); /* Para centrarlo mejor */
+            top: 25%; left: 35%; 
+            transform: translateX(-50%);
         }
-
-        /* --- 4. PORCENTAJE CHICO --- */
-        /* Lo acercamos al centro (cerca del pilar) */
         #boy-percent-box {
-            top: 25%;   /* Altura */
-            right: 35%; /* 35% desde la derecha (casi al centro) */
+            top: 25%; right: 35%;
             transform: translateX(50%);
         }
 
         /* ================================================================== */
 
 
-        /* --- NOMBRES DE EQUIPO (Opcional, si quieres volver a ponerlos) --- */
-        .team-name {
-            position: absolute;
-            top: 20px;
-            width: 100%;
-            text-align: center;
-            font-size: 1.5rem; color: gold; 
-            text-shadow: 2px 2px 4px #000;
-            z-index: 15;
-            display: none; /* Oculto por ahora según tu última imagen */
-        }
-
-
         /* --- EL CENTRO MÓVIL (Pilar + Personajes) --- */
         #movable-center {
             position: absolute;
-            top: 70%; 
+            /* Posición vertical relativa */
+            top: 65%; 
             left: 50%; 
             transform: translate(-50%, -50%); 
             transition: left 0.3s ease-out; 
-            z-index: 10;
+            
+            /* CAMBIO: Z-index muy alto (50) para estar SIEMPRE ENCIMA de los textos (5) */
+            z-index: 50; 
+            
             display: flex; 
             align-items: flex-end; 
             justify-content: center;
             position: relative; 
             width: 10px; height: 10px;
-            margin-top: 600px; /* Ajustado para que no estén tan abajo */
+            
+            /* Eliminamos margin-top fijo en px para evitar desajustes */
+            margin-top: 0; 
         }
 
         #center-pilar {
-            height: 600px; 
+            /* CAMBIO: Altura en vh (60% de la altura de la pantalla) */
+            height: 60vh; 
             width: auto;
-            z-index: 12; 
-            margin-bottom: -50px; 
+            z-index: 52; 
+            margin-bottom: -4vh; /* Ajuste relativo */
         }
 
         .character-img {
             position: absolute;
-            height: 300px; 
-            bottom: -50px; 
+            /* CAMBIO: Altura en vh (30% de la altura de la pantalla) */
+            height: 30vh; 
+            bottom: -4vh; /* Ajuste relativo */
         }
 
-        #girl-char { right: 40px; z-index: 11; }
-        #boy-char { left: 40px; z-index: 11; }
+        #girl-char { right: 4vh; z-index: 51; } /* Separación relativa */
+        #boy-char { left: 4vh; z-index: 51; }
 
 
         /* --- PANTALLA DE VICTORIA --- */
@@ -136,7 +116,7 @@
             justify-content: center; align-items: center;
             z-index: 100; color: gold; text-align: center;
         }
-        #winner-overlay h1 { font-size: 6rem; margin: 0; text-transform: uppercase; text-shadow: 0 0 20px gold;}
+        #winner-overlay h1 { font-size: 8vw; margin: 0; text-transform: uppercase; text-shadow: 0 0 20px gold;}
     </style>
 </head>
 <body>
@@ -147,7 +127,7 @@
 
     <div id="winner-overlay">
         <h1 id="winner-text">WINNER!</h1>
-        <p style="color:white; font-size: 2rem">Reiniciando...</p>
+        <p style="color:white; font-size: 2vw">Reiniciando...</p>
     </div>
 
     <div id="game-arena">
