@@ -22,60 +22,78 @@
             background-size: cover;
         }
 
-        /* --- ARENA DE JUEGO --- */
-        #game-arena {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0); 
-        }
-
-        /* --- UI SUPERIOR (CONTENEDOR GENERAL) --- */
-        .team-ui {
-            position: absolute;
-            top: 0; 
-            width: 300px; 
-            height: 100%; /* Ocupa toda la altura para poder posicionar cosas libremente */
-            /* ELIMINADO: display: flex; flex-direction: column; */
-            /* Ahora los hijos son libres */
-            z-index: 20;
-        }
-
-        #girl-ui { left: 5%; } 
-        #boy-ui { right: 5%; }
-        
-
-        /* --- 2. CAJA DE VICTORIAS --- */
-        .victory-box {
-            position: absolute; /* Libre movimiento */
-            left: 50%; /* Centrado horizontal */
-            transform: translateX(-50%); /* Corrección del centrado */
-            
-            /* AQUÍ MUEVES SOLO LAS VICTORIAS */
-            top: 150px;
-            left: 80px;
-            padding: 10px 30px;
-            font-size: 2.5rem; 
+        /* --- UI GENERAL --- */
+        /* Estilos visuales compartidos (Color, borde, fuente) */
+        .victory-style {
+            position: absolute; 
+            font-size: 3rem; 
             font-weight: bold;
             color: white;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 20;
+            /* Quitamos el borde y fondo para que parezca que el número está pintado en la piedra */
+            /* Si quieres caja negra, descomenta las líneas de abajo: */
+            /* background: rgba(0,0,0,0.5); padding: 5px 20px; border-radius: 10px; */
         }
 
-        /* --- 3. PORCENTAJE --- */
-        .big-percent {
-            position: absolute; /* Libre movimiento */
+        .percent-style {
+            position: absolute;
+            font-size: 5rem; 
+            color: white;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            z-index: 20;
+            line-height: 1;
+        }
+
+        /* ==================================================================
+           AQUÍ ES DONDE AJUSTAS LAS POSICIONES INDEPENDIENTEMENTE
+           ================================================================== */
+
+        /* --- 1. VICTORIAS CHICA (Izquierda) --- */
+        /* Ajusta 'top' y 'left' para que caiga dentro del rectángulo de piedra izquierdo */
+        #girl-wins-box {
+            top: 36%;  /* Altura aproximada del rectángulo */
+            left: 14%; /* Distancia desde la izquierda */
+        }
+
+        /* --- 2. VICTORIAS CHICO (Derecha) --- */
+        /* Ajusta 'top' y 'right' para que caiga dentro del rectángulo de piedra derecho */
+        #boy-wins-box {
+            top: 36%;   /* Altura aproximada del rectángulo */
+            right: 14%; /* Distancia desde la derecha */
+        }
+
+        /* --- 3. PORCENTAJE CHICA --- */
+        /* Lo acercamos al centro (cerca del pilar) */
+        #girl-percent-box {
+            top: 45%;   /* Altura */
+            left: 38%;  /* 38% desde la izquierda (casi al centro) */
+            transform: translateX(-50%); /* Para centrarlo mejor */
+        }
+
+        /* --- 4. PORCENTAJE CHICO --- */
+        /* Lo acercamos al centro (cerca del pilar) */
+        #boy-percent-box {
+            top: 45%;   /* Altura */
+            right: 38%; /* 38% desde la derecha (casi al centro) */
+            transform: translateX(50%);
+        }
+
+        /* ================================================================== */
+
+
+        /* --- NOMBRES DE EQUIPO (Opcional, si quieres volver a ponerlos) --- */
+        .team-name {
+            position: absolute;
+            top: 20px;
             width: 100%;
             text-align: center;
-
-            /* AQUÍ MUEVES SOLO EL PORCENTAJE */
-            top: 10px; 
-            font-size: 5rem; 
-            line-height: 1;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            margin: 0; /* Quitamos márgenes para usar solo 'top' */
+            font-size: 1.5rem; color: gold; 
+            text-shadow: 2px 2px 4px #000;
+            z-index: 15;
+            display: none; /* Oculto por ahora según tu última imagen */
         }
-        
+
 
         /* --- EL CENTRO MÓVIL (Pilar + Personajes) --- */
         #movable-center {
@@ -89,10 +107,8 @@
             align-items: flex-end; 
             justify-content: center;
             position: relative; 
-            width: 10px;
-            height: 10px;
-            /* Cuidado con este margen, si ves que se bajan mucho los muñecos, bórralo */
-            margin-top: 140px; 
+            width: 10px; height: 10px;
+            margin-top: 100px; /* Ajustado para que no estén tan abajo */
         }
 
         #center-pilar {
@@ -136,15 +152,22 @@
 
     <div id="game-arena">
         
-        <div id="girl-ui" class="team-ui">
-             <div class="victory-box"><span id="girl-wins">0</span></div>
-             <h2 class="big-percent"><span id="girl-percent-txt">50</span>%</h2>
+        <div id="girl-wins-box" class="victory-style">
+            <span id="girl-wins">0</span>
         </div>
 
-        <div id="boy-ui" class="team-ui">
-             <div class="victory-box"><span id="boy-wins">0</span></div>
-             <h2 class="big-percent"><span id="boy-percent-txt">50</span>%</h2>
+        <div id="boy-wins-box" class="victory-style">
+            <span id="boy-wins">0</span>
         </div>
+
+        <div id="girl-percent-box" class="percent-style">
+            <span id="girl-percent-txt">50</span>%
+        </div>
+
+        <div id="boy-percent-box" class="percent-style">
+            <span id="boy-percent-txt">50</span>%
+        </div>
+
 
         <div id="movable-center">
             <img src="image/tralacut.png" id="girl-char" class="character-img" alt="Girl">
